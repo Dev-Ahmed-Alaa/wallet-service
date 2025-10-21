@@ -148,16 +148,6 @@ I've broken down the development into logical phases:
 4. **Audit** - Ledger implementation and balance snapshots
 5. **Polish** - Testing, documentation, and performance optimization
 
-## 🔧 Tech Stack
-
-I've selected modern, battle-tested technologies:
-
--   **Framework**: Laravel (PHP)
--   **Database**: PostgreSQL with transaction isolation
--   **Caching**: Redis for performance and rate limiting
--   **Deployment**: Docker for consistent environments
--   **Testing**: PHPUnit with concurrency simulation
-
 ## 🚀 Getting Started
 
 ```bash
