@@ -1,61 +1,185 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <a href="https://recapet.com/" target="_blank">
+    <img src="https://recapet.com/wp-content/uploads/2022/12/Recapet-Logo.svg" width="300" alt="Recapet Logo">
+  </a>
+  <h1>💰 My Wallet Service Project 💰</h1>
+  <p><em>A secure, reliable digital wallet system with a focus on consistency and auditability</em></p>
+</div>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<div align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-api-design">API</a> •
+  <a href="#-implementation-plan">Implementation</a> •
+  <a href="#-tech-stack">Tech Stack</a>
+</div>
 
-## About Laravel
+<br>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Project Vision
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+I've designed this wallet service to handle financial transactions with rock-solid reliability. My goal was to create a system that maintains perfect consistency even under heavy load, while providing a comprehensive audit trail for every penny moved through the platform.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The service enables users to create accounts, manage personal wallets, deposit and withdraw funds, and transfer money to other users - all with enterprise-grade security and performance.
 
-## Learning Laravel
+## ✨ Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<table>
+  <tr>
+    <td align="center">👤</td>
+    <td><strong>User Management</strong></td>
+    <td>Secure registration and authentication with token-based API access. I've implemented industry-standard password hashing to keep user credentials safe.</td>
+  </tr>
+  <tr>
+    <td align="center">💼</td>
+    <td><strong>Automatic Wallets</strong></td>
+    <td>Each new user automatically receives their own wallet upon registration - simple and frictionless onboarding.</td>
+  </tr>
+  <tr>
+    <td align="center">💵</td>
+    <td><strong>Deposits</strong></td>
+    <td>Users can easily add funds with real-time balance updates and permanent transaction records.</td>
+  </tr>
+  <tr>
+    <td align="center">🏧</td>
+    <td><strong>Withdrawals</strong></td>
+    <td>Smart balance validation prevents overdrafts, with comprehensive status tracking for every transaction.</td>
+  </tr>
+  <tr>
+    <td align="center">↔️</td>
+    <td><strong>P2P Transfers</strong></td>
+    <td>Send money to other users with intelligent fee calculation (transfers above $25 incur a fee of $2.50 + 10%).</td>
+  </tr>
+  <tr>
+    <td align="center">🔄</td>
+    <td><strong>Idempotent Requests</strong></td>
+    <td>My unique request identifier system prevents duplicate transfers if a client retries a request.</td>
+  </tr>
+  <tr>
+    <td align="center">⚡</td>
+    <td><strong>Concurrency Protection</strong></td>
+    <td>Advanced locking mechanisms prevent double-spending and maintain accurate balances under high load.</td>
+  </tr>
+  <tr>
+    <td align="center">📒</td>
+    <td><strong>Immutable Ledger</strong></td>
+    <td>Every financial movement is recorded in a one-way ledger that can never be modified or deleted.</td>
+  </tr>
+  <tr>
+    <td align="center">📊</td>
+    <td><strong>Balance Snapshots</strong></td>
+    <td>Periodic balance snapshots enable historical reconciliation and auditing.</td>
+  </tr>
+  <tr>
+    <td align="center">🔍</td>
+    <td><strong>Monitoring</strong></td>
+    <td>Comprehensive logging and health checks make troubleshooting a breeze.</td>
+  </tr>
+</table>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🛡️ Security & Quality Focus
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+I've built this system with security and precision as top priorities:
 
-## Laravel Sponsors
+-   **Money Precision**: Cent-level accuracy with proper rounding for all financial calculations
+-   **Data Protection**: End-to-end encryption for sensitive data both in transit and at rest
+-   **Access Control**: Rate-limiting on critical endpoints and strict authentication for protected routes
+-   **Comprehensive Testing**: Automated test suite covering business rules, error handling, and concurrent operations
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🏗️ Architecture
 
-### Premium Partners
+I've designed a clean, modular architecture that separates concerns and enables future scaling:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Data Models
 
-## Contributing
+<div align="center">
+  <img src="https://via.placeholder.com/800x400?text=My+Data+Model+Design" width="80%" alt="Data Model Diagram">
+</div>
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   **User**: Authentication and profile information
+-   **Wallet**: Balance tracking with status management
+-   **LedgerEntry**: Immutable financial transaction records
+-   **Transfer**: P2P transfer details with fee calculation
+-   **IdempotencyKey**: Request deduplication system
+-   **BalanceSnapshot**: Point-in-time balance records
 
-## Code of Conduct
+### Key Components
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│  API Layer      │      │  Service Layer  │      │  Data Layer     │
+│                 │      │                 │      │                 │
+│  - Controllers  │─────▶│  - WalletSvc    │─────▶│  - Repositories │
+│  - Middleware   │      │  - TransferSvc  │      │  - Models       │
+│  - Validation   │◀─────│  - LedgerSvc    │◀─────│  - Database     │
+└─────────────────┘      └─────────────────┘      └─────────────────┘
+```
 
-## Security Vulnerabilities
+## 🔌 API Design
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+I've created a RESTful API with intuitive endpoints:
 
-## License
+### Authentication
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-   `POST /api/auth/register` - Create new user account
+-   `POST /api/auth/login` - Obtain access token
+-   `POST /api/auth/logout` - Invalidate token
+
+### Wallet Operations
+
+-   `GET /api/wallet` - View wallet details
+-   `GET /api/wallet/transactions` - View transaction history
+-   `POST /api/transactions/deposit` - Add funds
+-   `POST /api/transactions/withdraw` - Remove funds
+-   `POST /api/transactions/transfer` - Send to another user
+
+### Monitoring
+
+-   `GET /healthz` - Service health check
+-   `GET /api/admin/metrics` - System metrics (admin only)
+
+## 📝 Implementation Plan
+
+I've broken down the development into logical phases:
+
+1. **Foundation** - User auth, wallet creation, database schema
+2. **Transactions** - Deposit, withdrawal, and transfer functionality
+3. **Consistency** - Concurrency handling and idempotency
+4. **Audit** - Ledger implementation and balance snapshots
+5. **Polish** - Testing, documentation, and performance optimization
+
+## 🔧 Tech Stack
+
+I've selected modern, battle-tested technologies:
+
+-   **Framework**: Laravel (PHP)
+-   **Database**: PostgreSQL with transaction isolation
+-   **Caching**: Redis for performance and rate limiting
+-   **Deployment**: Docker for consistent environments
+-   **Testing**: PHPUnit with concurrency simulation
+
+## 🚀 Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/wallet-service.git
+
+# Install dependencies
+composer install
+
+# Configure environment
+cp .env.example .env
+php artisan key:generate
+
+# Run migrations and seeders
+php artisan migrate --seed
+
+# Start the development server
+php artisan serve
+```
+
+---
+
+<div align="center">
+  <p>Designed with ❤️ by <a href="https://recapet.com/">Recapet</a> Challenge Participant</p>
+</div>
