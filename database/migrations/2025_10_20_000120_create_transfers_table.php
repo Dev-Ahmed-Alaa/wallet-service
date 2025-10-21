@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sender_wallet_id')->constrained('wallets')->nullOnDelete();
-            $table->foreignId('receiver_wallet_id')->constrained('wallets')->nullOnDelete();
+            $table->foreignId('sender_wallet_id')->nullable()->constrained('wallets')->nullOnDelete();
+            $table->foreignId('receiver_wallet_id')->nullable()->constrained('wallets')->nullOnDelete();
             $table->bigInteger('amount'); // cents
             $table->bigInteger('fee_amount')->default(0); // cents
             $table->string('status')->default('pending'); // pending|succeeded|failed

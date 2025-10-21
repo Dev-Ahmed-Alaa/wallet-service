@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('status')->default('pending'); // pending|completed|failed
             $table->timestamp('created_at'); // one-way idempotency key
 
-            $table->index(['user_id', ' ']);
+            $table->index(['user_id', 'status']);
         });
     }
 
