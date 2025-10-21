@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('ledger_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wallet_id')->constrained('wallets')->nullOnDelete();
+            $table->foreignId('wallet_id')->nullable()->constrained('wallets')->nullOnDelete();
             $table->string('direction'); // credit|debit
             $table->string('type'); // deposit|withdrawal|transfer_in|transfer_out|fee
             $table->bigInteger('amount'); // cents, always positive

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('balance_snapshots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wallet_id')->constrained('wallets')->nullOnDelete();
+            $table->foreignId('wallet_id')->nullable()->constrained('wallets')->nullOnDelete();
             $table->bigInteger('balance'); // cents
             $table->timestamp('snapshot_taken_at');
             $table->timestamps();
