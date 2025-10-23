@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Contracts\Auth\AuthenticationServiceInterface;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -26,9 +25,9 @@ class AuthenticationService implements AuthenticationServiceInterface
      * Register a new user
      *
      * @param RegisterRequest $request
-     * @return array
+     * @return User
      */
-    public function register(RegisterRequest $request): array
+    public function register(RegisterRequest $request): User
     {
         $result = DB::transaction(function () use ($request) {
             $user = User::create($request->validated());
@@ -38,11 +37,7 @@ class AuthenticationService implements AuthenticationServiceInterface
             $token = $user->createToken('default')->plainTextToken;
             $user->token = $token;
 
-            return [
-                'user' => $user,
-                'status' => 'success',
-                'message' => 'User created successfully',
-            ];
+            return $user;
         });
 
         return $result;
@@ -52,9 +47,9 @@ class AuthenticationService implements AuthenticationServiceInterface
      * Login a user
      *
      * @param LoginRequest $request
-     * @return array|JsonResponse
+     * @return User
      */
-    public function login(LoginRequest $request): array|JsonResponse
+    public function login(LoginRequest $request): User|JsonResponse
     {
         $user = User::where('email', $request->validated()['email'])->first();
 
@@ -65,26 +60,34 @@ class AuthenticationService implements AuthenticationServiceInterface
         $token = $user->createToken('default')->plainTextToken;
         $user->token = $token;
 
-        return [
-            'user' => $user,
-            'status' => 'success',
-            'message' => 'User logged in successfully',
-        ];
+        return $user;
     }
 
     /**
      * Logout a user
      *
      * @param User $user
-     * @return array
+     * @return void
      */
-    public function logout(User $user): array
+    public function logout(User $user): void
     {
         $user->currentAccessToken()->delete();
+    }
 
-        return [
-            'status' => 'success',
-            'message' => 'User logged out',
-        ];
+    /**
+     * Generate a pin
+     *
+     * @param int $pin
+     * @return void
+     */
+    public function generatePin(User $user, int $pin): void
+    {
+        $user
+            ->wallet()
+            ->whereNull('pin_hash')
+            ->lockForUpdate()
+            ->update([
+                'pin_hash' => Hash::make($pin),
+            ]);
     }
 }

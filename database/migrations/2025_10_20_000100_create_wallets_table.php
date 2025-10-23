@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->string('pin_hash', 255)->nullable();
             $table->bigInteger('balance')->default(0);
             $table->string('status')->default('active');
             $table->timestamps();
