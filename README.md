@@ -152,8 +152,9 @@ This project supports full containerization for quick setup and consistent envir
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/recapet-wallet-challenge.git
-cd recapet-wallet-challenge
+git clone git@github.com:Dev-Ahmed-Alaa/wallet-service.git
+or git clone https://github.com/Dev-Ahmed-Alaa/wallet-service.git
+cd wallet-service
 ```
 
 2. **Build and start containers**
