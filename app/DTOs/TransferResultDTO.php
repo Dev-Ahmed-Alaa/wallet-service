@@ -25,4 +25,18 @@ readonly class TransferResultDTO
             'fee_formatted' => $this->fee->toFormattedString(),
         ];
     }
+
+    public function __get($name)
+    {
+        switch ($name) {
+            case 'senderBalanceAfter':
+                return $this->senderBalance->cents;
+            case 'recipientBalanceAfter':
+                return $this->receiverBalance->cents;
+            case 'feeAmount':
+                return $this->fee->cents;
+        }
+
+        throw new \InvalidArgumentException("Property {$name} does not exist");
+    }
 }

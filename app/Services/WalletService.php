@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Contracts\Wallet\WalletServiceInterface;
 use App\Utils\MoneyUtil;
 use App\DTOs\TransferResultDTO;
-use App\Exceptions\InsufficientBalanceException;
-use App\Exceptions\InvalidAmountException;
-use App\Exceptions\WalletInactiveException;
+use Illuminate\Validation\ValidationException;
 use App\Models\Transfer;
 use App\Models\User;
 use App\Models\Wallet;
@@ -53,7 +51,7 @@ class WalletService implements WalletServiceInterface
      * @param string|null $idempotencyKey Optional idempotency key for preventing duplicate operations
      * @return array The deposit result with updated balance
      * @throws \Exception If wallet not found
-     * @throws InvalidAmountException If amount is invalid
+     * @throws ValidationException If amount is invalid
      */
     public function deposit(User $user, MoneyUtil $amount, ?string $idempotencyKey = null): array
     {
@@ -65,7 +63,7 @@ class WalletService implements WalletServiceInterface
                 }
 
                 if ($amount->isZero() || $amount->cents < 0) {
-                    throw new InvalidAmountException('Amount must be positive');
+                    throw ValidationException::withMessages(['amount' => ['Amount must be positive']]);
                 }
 
                 $newBalance = $wallet->balance + $amount->cents;
@@ -93,8 +91,7 @@ class WalletService implements WalletServiceInterface
      * @param string|null $idempotencyKey Optional idempotency key for preventing duplicate operations
      * @return array The withdrawal result with updated balance
      * @throws \Exception If wallet not found
-     * @throws InvalidAmountException If amount is invalid
-     * @throws InsufficientBalanceException If balance is insufficient
+     * @throws ValidationException If amount is invalid or balance is insufficient
      */
     public function withdraw(User $user, MoneyUtil $amount, ?string $idempotencyKey = null): array
     {
@@ -106,11 +103,11 @@ class WalletService implements WalletServiceInterface
                 }
 
                 if ($amount->isZero() || $amount->cents < 0) {
-                    throw new InvalidAmountException('Amount must be positive');
+                    throw ValidationException::withMessages(['amount' => ['Amount must be positive']]);
                 }
 
                 if ($wallet->balance < $amount->cents) {
-                    throw new InsufficientBalanceException('Insufficient balance');
+                    throw ValidationException::withMessages(['balance' => ['Insufficient balance']]);
                 }
 
                 $newBalance = $wallet->balance - $amount->cents;
@@ -139,14 +136,12 @@ class WalletService implements WalletServiceInterface
      * @param string|null $idempotencyKey Optional idempotency key for preventing duplicate operations
      * @return TransferResultDTO The transfer result with updated balances
      * @throws \Exception If wallet not found
-     * @throws WalletInactiveException If either wallet is inactive
-     * @throws InvalidAmountException If amount is invalid
-     * @throws InsufficientBalanceException If sender has insufficient balance
+     * @throws ValidationException If wallet is inactive, amount is invalid, or balance is insufficient
      */
     public function transfer(User $sender, User $receiver, MoneyUtil $amount, ?string $idempotencyKey = null): TransferResultDTO
     {
-        return $this->performIdempotent($sender, $idempotencyKey, function () use ($sender, $receiver, $amount, $idempotencyKey) {
-            return DB::transaction(function () use ($sender, $receiver, $amount, $idempotencyKey) {
+        return $this->performIdempotent($sender, $idempotencyKey, function () use ($sender, $receiver, $amount) {
+            return DB::transaction(function () use ($sender, $receiver, $amount) {
                 $senderWallet = $this->walletRepository->lockForUpdate($sender->id);
                 $receiverWallet = $this->walletRepository->lockForUpdate($receiver->id);
 
@@ -155,18 +150,18 @@ class WalletService implements WalletServiceInterface
                 }
 
                 if ($senderWallet->status !== 'active' || $receiverWallet->status !== 'active') {
-                    throw new WalletInactiveException('Wallet is inactive');
+                    throw ValidationException::withMessages(['wallet' => ['Wallet is inactive']]);
                 }
 
                 if ($amount->isZero() || $amount->cents < 0) {
-                    throw new InvalidAmountException('Amount must be positive');
+                    throw ValidationException::withMessages(['amount' => ['Amount must be positive']]);
                 }
 
                 $fee = $this->calculateFee($amount);
                 $totalDebit = $amount->add($fee);
 
                 if ($senderWallet->balance < $totalDebit->cents) {
-                    throw new InsufficientBalanceException('Insufficient balance');
+                    throw ValidationException::withMessages(['balance' => ['Insufficient balance']]);
                 }
 
                 $newSenderBalance = $senderWallet->balance - $totalDebit->cents;
@@ -181,7 +176,7 @@ class WalletService implements WalletServiceInterface
                     'amount' => $amount->cents,
                     'fee_amount' => $fee->cents,
                     'status' => 'succeeded',
-                    'idempotency_key' => $idempotencyKey ?: uniqid('tx_', true),
+                    'idempotency_key' => uniqid('tx_', true), // Generate a unique key if not provided
                 ]);
 
                 // Create ledger entries
@@ -233,8 +228,7 @@ class WalletService implements WalletServiceInterface
         $this->ledgerRepository->createEntry([
             'wallet_id' => $senderWallet->id,
             'amount' => -$amount->cents,
-            'balance' => $newSenderBalance + $fee->cents,
-            'balance_after' => $newSenderBalance, // Balance after fee'
+            'balance_after' => $newSenderBalance + $fee->cents, // Balance before fee deduction
             'type' => 'transfer_out',
             'direction' => 'debit',
             'reference_id' => $transfer->id,
@@ -247,8 +241,7 @@ class WalletService implements WalletServiceInterface
             $this->ledgerRepository->createEntry([
                 'wallet_id' => $senderWallet->id,
                 'amount' => -$fee->cents,
-                'balance' => $newSenderBalance,
-                'balance_after' => $newSenderBalance,
+                'balance_after' => $newSenderBalance, // Final balance after fee
                 'type' => 'fee',
                 'direction' => 'debit',
                 'reference_id' => $transfer->id,
@@ -261,7 +254,6 @@ class WalletService implements WalletServiceInterface
         $this->ledgerRepository->createEntry([
             'wallet_id' => $receiverWallet->id,
             'amount' => $amount->cents,
-            'balance' => $newReceiverBalance,
             'balance_after' => $newReceiverBalance,
             'type' => 'transfer_in',
             'direction' => 'credit',
