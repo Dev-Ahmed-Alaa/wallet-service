@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\Auth\AuthenticationServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\GeneratePinRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
@@ -33,7 +34,7 @@ class AuthController extends Controller
     {
         $result = $this->authService->register($request);
         return $this->resourceResponse(
-            UserResource::make($result['user']),
+            UserResource::make($result),
             'User registered successfully'
         );
     }
@@ -53,7 +54,7 @@ class AuthController extends Controller
         }
 
         return $this->resourceResponse(
-            UserResource::make($result['user']),
+            UserResource::make($result),
             'Login successful'
         );
     }
@@ -66,11 +67,26 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $result = $this->authService->logout($request->user());
+        $this->authService->logout($request->user());
 
         return $this->successResponse(
-            null,
+            [],
             'Logout successful'
+        );
+    }
+
+    /**
+     * Generate a PIN
+     *
+     * @return JsonResponse
+     */
+    public function generatePin(GeneratePinRequest $request): JsonResponse
+    {
+        $this->authService->generatePin($request->user(), $request->validated()['pin']);
+
+        return $this->successResponse(
+            [],
+            'PIN generated successfully'
         );
     }
 }

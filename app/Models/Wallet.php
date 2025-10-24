@@ -13,6 +13,7 @@ class Wallet extends Model
         'user_id',
         'balance',
         'status',
+        'pin_hash'
     ];
 
     protected $casts = [

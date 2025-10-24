@@ -13,11 +13,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $user = User::FirstOrcreate([
+            'email' => 'menna.rateb@recapet.com',
+        ], [
             'first_name' => 'Recapet',
             'last_name' => 'Company',
             'email' => 'menna.rateb@recapet.com',
             'password' => Hash::make('Recapet@123'),
         ]);
+
+        $user->wallet()->create(
+            [
+                'balance' => 0,
+                'status' => 'active',
+                'pin_hash' => Hash::make('123456'),
+            ]
+        );
     }
 }

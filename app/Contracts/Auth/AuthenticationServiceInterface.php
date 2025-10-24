@@ -15,21 +15,28 @@ interface AuthenticationServiceInterface
      * @param RegisterRequest $request
      * @return array
      */
-    public function register(RegisterRequest $request): array;
+    public function register(RegisterRequest $request): User;
 
     /**
      * Login a user
      *
      * @param LoginRequest $request
-     * @return array|JsonResponse
+     * @return User|JsonResponse
      */
-    public function login(LoginRequest $request): array|JsonResponse;
+    public function login(LoginRequest $request): User|JsonResponse;
 
     /**
      * Logout a user
      *
      * @param User $user
-     * @return array
+     * @return void
      */
-    public function logout(User $user): array;
+    public function logout(User $user): void;
+
+    /**
+     * Generate a pin for a user
+     * @param int $pin
+     * @return void
+     */
+    public function generatePin(User $user, int $pin): void;
 }
